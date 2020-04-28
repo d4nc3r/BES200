@@ -18,7 +18,7 @@ namespace LibraryApi.Controllers
         }
 
         [HttpGet("books")]
-        public ActionResult GetAllBooks()
+        public ActionResult GetAllBooks([FromQuery] string genre)
         {
             var books = Context.Books
                 .Where(b=> b.InStock)
@@ -29,14 +29,20 @@ namespace LibraryApi.Controllers
                     Author = b.Author,
                     Genre = b.Genre,
                     NumberOfPages = b.NumberOfPages
-                })
-                .ToList();
+                });
+                
 
+            if(genre != null)
+            {
+                books = books.Where(b => b.Genre == genre);
+            }
+
+            var booksList = books.ToList();
             var response = new GetBooksResponse
             {
-                Books = books,
-                GenreFilter = null,
-                NumberOfBooks = books.Count
+                Books = booksList,
+                GenreFilter = genre,
+                NumberOfBooks = booksList.Count
             };
             return Ok(response);
         }
