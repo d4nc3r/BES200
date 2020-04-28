@@ -33,6 +33,27 @@ namespace LibraryApi.Controllers
             // one last thing!
         }
 
+        // GET /employees/93/salary
+        [HttpGet("employees/{employeeId:int:min(0)}/salary")]
+        public ActionResult GetEmployeeSalary(int employeeId)
+        {
+            return Ok($"The Employee {employeeId} has a salary of $72,000.00");
+        }
+
+        // GET /employees?dept=DEV
+        [HttpGet("employees")]
+        public ActionResult GetEmployees([FromQuery]string dept = "All")
+        {
+            return Ok($"Returning employees for department {dept}");
+        }
+
+        // "Kinds" of resources (Resource Archetypes)
+        // 1. Document - a single thingy.  GET /employee/52
+        // 2. Collection - a plural thingy GET /employees?dept=DEV
+        // 3. Store
+        // 4. Controller
+
+
     }
 
     public class GetStatusResponse

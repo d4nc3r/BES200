@@ -32,10 +32,6 @@ namespace LibraryApiIntegrationTests
                 var provider = services
                     .BuildServiceProvider();
 
-
-
-
-
                 var sp = services.BuildServiceProvider();
 
 

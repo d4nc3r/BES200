@@ -43,7 +43,7 @@ namespace LibraryApiIntegrationTests
 
             Assert.Equal("Everything is golden!", content.message);
             Assert.Equal("Joe Schmidt", content.checkedBy);
-            Assert.Equal(DateTime.Now, content.whenLastChecked);
+            Assert.Equal(new DateTime(1969,4,20,23,59,59), content.whenLastChecked);
         }
     }
 
