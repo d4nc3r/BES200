@@ -53,13 +53,37 @@ namespace LibraryApi.Controllers
         // 3. Store
         // 4. Controller
 
+        [HttpGet("whoami")]
+        public ActionResult WhoAmi(
+            [FromHeader(Name ="User-Agent")]
+            string userAgent)
+        {
+            return Ok($"I see you are running {userAgent}");
+        }
+
+        [HttpPost("employees")]
+        public ActionResult HireEmployee([FromBody] EmployeeCreateRequest employeeToHire, 
+            [FromHeader(Name ="Content-Type")] string ellis)
+        {
+            return Ok($"Hiring {employeeToHire.LastName} as a {employeeToHire.Department} \n {ellis}");
+
+        }
 
     }
 
     public class GetStatusResponse
     {
-        public string Message { get;  set; }
+        public string Message { get; set; }
         public string CheckedBy { get; set; }
         public DateTime WhenLastChecked { get; set; }
     }
+
+
+    public class EmployeeCreateRequest
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Department { get; set; }
+    }
+
 }
