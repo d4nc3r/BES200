@@ -1,4 +1,5 @@
 ﻿using LibraryApi;
+using LibraryApi.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace LibraryApiIntegrationTests
 {
@@ -18,6 +20,14 @@ namespace LibraryApiIntegrationTests
             builder.ConfigureServices(services =>
             {
 
+                var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(ISystemTime));
+
+                if(descriptor != null)
+                {
+                    services.Remove(descriptor);
+                    services.AddTransient<ISystemTime, TestingSystemTime>();
+                }
 
                 var provider = services
                     .BuildServiceProvider();

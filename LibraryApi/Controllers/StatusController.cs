@@ -1,4 +1,5 @@
 ﻿
+using LibraryApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,16 @@ namespace LibraryApi.Controllers
 {
     public class StatusController : Controller
     {
+
+        ISystemTime systemTime;
+
+        public StatusController(ISystemTime systemTime)
+        {
+            this.systemTime = systemTime;
+        }
+
         // GET /status -> 200 Ok
-        
+
         [HttpGet("/status")]
         public ActionResult GetTheStatus()
         {
@@ -18,7 +27,7 @@ namespace LibraryApi.Controllers
             {
                 Message = "Everything is golden!",
                 CheckedBy = "Joe Schmidt",
-                WhenLastChecked = DateTime.Now
+                WhenLastChecked = systemTime.GetCurrent()
             };
             return Ok(response);
             // one last thing!
