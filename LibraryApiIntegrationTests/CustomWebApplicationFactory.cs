@@ -17,33 +17,30 @@ namespace LibraryApiIntegrationTests
 
             builder.ConfigureServices(services =>
             {
-               
-                
-                var provider = services                   
+
+
+                var provider = services
                     .BuildServiceProvider();
 
-               
-               
 
-              
+
+
+
                 var sp = services.BuildServiceProvider();
 
-               
+
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                   
+
                     var loggerFactory = scopedServices.GetRequiredService<ILoggerFactory>();
 
                     var logger = scopedServices
                         .GetRequiredService<ILogger<WebTestFixture>>();
 
-                 
-                   
-
                     try
                     {
-      
+
                     }
                     catch (Exception ex)
                     {
