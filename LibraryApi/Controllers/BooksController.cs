@@ -18,7 +18,46 @@ namespace LibraryApi.Controllers
         {
             Context = context;
         }
+        // Jeff says this is really cool. Maybe look at it again some day.
+        [HttpPut("books/{id:int}/numberofpages")]
+        public async Task<ActionResult> ChangeNumberOfPages(int id, [FromBody] int numberOfPages)
+        {
+            // validate the thing
+            if(numberOfPages <= 0)
+            {
+                return BadRequest("Get a life, loser!");
+            }
+            var book = await Context.Books
+                    .Where(b => b.Id == id && b.InStock)
+                    .SingleOrDefaultAsync();
+
+            if(book!= null)
+            {
+                book.NumberOfPages = numberOfPages;
+                await Context.SaveChangesAsync();
+                return NoContent();
+            } else
+            {
+                return NotFound();
+            }
+        }
         
+        [HttpDelete("books/{bookId:int}")]
+        public async Task<ActionResult> RemoveABook(int bookId)
+        {
+            var bookToRemove = await Context.Books
+                .Where(b => b.InStock && b.Id == bookId)
+                .SingleOrDefaultAsync();
+
+            if(bookToRemove != null)
+            {
+                // we never delete anything from a database.
+                bookToRemove.InStock = false;
+                await Context.SaveChangesAsync();
+            }
+            return NoContent(); // Fine.
+        }
+
         [HttpPost("books")]
         public async Task<ActionResult> AddABook([FromBody] PostBookCreate bookToAdd)
         {
