@@ -32,7 +32,7 @@ namespace LibraryApi.Controllers
             var response = new GetStatusResponse
             {
                 Message = "Everything is golden! " + config.GetValue<string>("appName"),
-                CheckedBy = "Joe Schmidt",
+                CheckedBy = "Joe Schmidtly",
                 WhenLastChecked = systemTime.GetCurrent()
             };
             return Ok(response);
