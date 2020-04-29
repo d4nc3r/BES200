@@ -18,13 +18,52 @@ namespace LibraryApi.Controllers
         {
             Context = context;
         }
+        
+        [HttpPost("books")]
+        public async Task<ActionResult> AddABook([FromBody] PostBookCreate bookToAdd)
+        {
+            // X 1. Need a model for the post [FromBody]
+            // 2. Validate the data coming in.
+            //    - declarative Validation
+            //    - Programmatic validation
+            //    - Return a 400 (Bad Request)
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            // 3. Add it to the database
+            var book = new Book
+            {
+               Title = bookToAdd.Title,
+               Author = bookToAdd.Author,
+               Genre = bookToAdd.Genre,
+               NumberOfPages = bookToAdd.NumberOfPages,
+               InStock = true
+            };
+            Context.Books.Add(book); // I have no Id!
+            await Context.SaveChangesAsync(); // Suddenly I have an ID! 
+            // 4. Return (if the post is to a collection)
+            //    - a 201 Created status code.
+            //    - Add a location header to the response. Location: http://localhost:1337/books/3
+            //    - Add an entity to the response that is EXACTLY what they'd get if they followed
+            //    - the location header.
+            var response = new GetABookResponse
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                Genre = book.Genre,
+                NumberOfPages = book.NumberOfPages
+            };
+            return CreatedAtRoute("books#getabook", new { bookId = response.Id }, response);
+        }
 
         /// <summary>
         /// Retrieve one of our books
         /// </summary>
         /// <param name="bookId">The Id of the book you want to find</param>
         /// <returns>A book</returns>
-        [HttpGet("books/{bookId:int}")]
+        [HttpGet("books/{bookId:int}", Name ="books#getabook")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
