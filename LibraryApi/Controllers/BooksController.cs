@@ -1,7 +1,9 @@
 ﻿using LibraryApi.Domain;
+using LibraryApi.Mappers;
 using LibraryApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,11 +15,14 @@ namespace LibraryApi.Controllers
     public class BooksController : Controller
     {
         LibraryDataContext Context;
+        IMapBooks Mapper;
 
-        public BooksController(LibraryDataContext context)
+        public BooksController(LibraryDataContext context, IMapBooks mapper)
         {
             Context = context;
+            Mapper = mapper;
         }
+
         // Jeff says this is really cool. Maybe look at it again some day.
         [HttpPut("books/{id:int}/numberofpages")]
         public async Task<ActionResult> ChangeNumberOfPages(int id, [FromBody] int numberOfPages)
@@ -131,30 +136,9 @@ namespace LibraryApi.Controllers
         [HttpGet("books")]
         public async Task<ActionResult<GetABookResponse>> GetAllBooks([FromQuery] string genre)
         {
-            var books =  Context.Books
-                .Where(b=> b.InStock)
-                .Select(b => new GetBooksResponseItem
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Author = b.Author,
-                    Genre = b.Genre,
-                    NumberOfPages = b.NumberOfPages
-                });
-                
-
-            if(genre != null)
-            {
-                books = books.Where(b => b.Genre == genre);
-            }
-
-            var booksList = await books.ToListAsync();
-            var response = new GetBooksResponse
-            {
-                Books = booksList,
-                GenreFilter = genre,
-                NumberOfBooks = booksList.Count
-            };
+            // WTCYWYH
+            GetBooksResponse response = await Mapper.GetAllBooksFor(genre);
+            
             return Ok(response);
         }
     }

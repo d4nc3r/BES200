@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using LibraryApi.Domain;
+using LibraryApi.Mappers;
 using LibraryApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,12 +36,16 @@ namespace LibraryApi
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                 });
 
-            services.AddTransient<ISystemTime, SystemTime>();
+            services.AddTransient<ISystemTime, SystemTime>(); // create a new instance of this for each needed injection
 
             services.AddDbContext<LibraryDataContext>(options =>
 
                 options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase"))
-            ) ;
+            );
+
+            // needs to be scoped because DbContext is also scoped
+            // the scope is the individual request that comes in
+            services.AddScoped<IMapBooks, EfBooksMapper>();
 
             services.AddSwaggerGen(c =>
             {

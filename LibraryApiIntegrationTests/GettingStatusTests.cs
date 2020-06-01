@@ -1,7 +1,6 @@
-﻿using LibraryApi;
+﻿using LibraryApi.Controllers;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,48 +10,24 @@ namespace LibraryApiIntegrationTests
 {
     public class GettingStatusTests : IClassFixture<WebTestFixture>
     {
-        private readonly HttpClient Client;
+        private HttpClient Client;
 
         public GettingStatusTests(WebTestFixture factory)
         {
-            this.Client = factory.CreateClient();
+            Client = factory.CreateClient();
         }
 
         [Fact]
-        public async Task WeGetAnOkStatusCode()
+        public async Task CanGetTheStatus()
         {
             var response = await Client.GetAsync("/status");
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
+            Assert.True(response.IsSuccessStatusCode);
 
-        [Fact]
-        public async Task WeGetSomeJsonDataBack()
-        {
-            var response = await Client.GetAsync("/status");
-            var contentType = response.Content.Headers.ContentType.MediaType;
-            Assert.Equal("application/json", contentType);
+            var content = await response.Content.ReadAsAsync<GetStatusResponse>();
 
-        }
-
-        [Fact]
-        public async Task ReturnsProperResponse()
-        {
-            var response = await Client.GetAsync("/status");
-
-            var content = await response.Content.ReadAsAsync<StatusResponse>();
-
-            Assert.Equal("Everything is golden!", content.message);
-            Assert.Equal("Joe Schmidt", content.checkedBy);
-            Assert.Equal(new DateTime(1969,4,20,23,59,59), content.whenLastChecked);
+            Assert.Equal("Everything is golden!", content.Message);
+            Assert.Equal("Joe Schmidtly", content.CheckedBy);
+            Assert.Equal(new DateTime(1979, 01, 22, 16, 20, 00), content.WhenLastChecked);
         }
     }
-
-
-    public class StatusResponse
-    {
-        public string message { get; set; }
-        public string checkedBy { get; set; }
-        public DateTime whenLastChecked { get; set; }
-    }
-
 }
