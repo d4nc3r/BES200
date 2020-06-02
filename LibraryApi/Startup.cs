@@ -15,6 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
+using LibraryApi.Profiles;
 
 namespace LibraryApi
 {
@@ -42,6 +44,18 @@ namespace LibraryApi
 
                 options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase"))
             );
+
+            // will look for every class that is a Profile, and will write code to map from one thing to another
+            // IMapperService can be injected to copy from one thing to another
+            //services.AddAutoMapper(typeof(Startup));
+
+            // use these specific profiles, instead of finding them
+            var mappingConfig = new MapperConfiguration(mc =>
+                mc.AddProfile(new BooksProfile())
+            );
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            services.AddSingleton(mappingConfig);
 
             // needs to be scoped because DbContext is also scoped
             // the scope is the individual request that comes in

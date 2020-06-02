@@ -44,11 +44,11 @@ namespace LibraryApiIntegrationTests.Books
 
             var data = await response.Content.ReadAsAsync<GetBooksResponse>();
 
-            Assert.Equal(2, data.NumberOfBooks);
+            Assert.Equal(2, data.numberOfBooks);
 
-            var firstBook = data.Books.Single(b => b.Id == 1);
-            Assert.Equal("Jaws", firstBook.Title);
-            Assert.Null(data.GenreFilter);
+            var firstBook = data.books.Single(b => b.id == 1);
+            Assert.Equal("Jaws", firstBook.title);
+            Assert.Null(data.genreFilter);
         }
         
         [Fact]
@@ -57,8 +57,8 @@ namespace LibraryApiIntegrationTests.Books
             var response = await Client.GetAsync("/books?genre=Fantasy");
             var data = await response.Content.ReadAsAsync<GetBooksResponse>();
 
-            Assert.Equal(1, data.NumberOfBooks);
-            Assert.Equal("Fantasy", data.GenreFilter);
+            Assert.Equal(1, data.numberOfBooks);
+            Assert.Equal("Fantasy", data.genreFilter);
         }
 
 
@@ -67,20 +67,20 @@ namespace LibraryApiIntegrationTests.Books
         // does it have the correct count?
         // If we use a genre, does it filter?
     }
+
+    public class GetBooksResponse
+    {
+        public Book[] books { get; set; }
+        public string genreFilter { get; set; }
+        public int numberOfBooks { get; set; }
+    }
+
+    public class Book
+    {
+        public int id { get; set; }
+        public string title { get; set; }
+        public string author { get; set; }
+        public string genre { get; set; }
+        public int numberOfPages { get; set; }
+    }
 }
-
-//public class GetBooksResponse
-//{
-//    public Book[] books { get; set; }
-//    public string genreFilter { get; set; }
-//    public int numberOfBooks { get; set; }
-//}
-
-//public class Book
-//{
-//    public int id { get; set; }
-//    public string title { get; set; }
-//    public string author { get; set; }
-//    public string genre { get; set; }
-//    public int numberOfPages { get; set; }
-//}
