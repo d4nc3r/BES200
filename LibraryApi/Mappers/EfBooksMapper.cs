@@ -23,6 +23,32 @@ namespace LibraryApi.Mappers
             Config = config;
         }
 
+        public async Task<GetABookResponse> AddBook(PostBookCreate bookToAdd)
+        {
+            //var book = new Book
+            //{
+            //    Title = bookToAdd.Title,
+            //    Author = bookToAdd.Author,
+            //    Genre = bookToAdd.Genre,
+            //    NumberOfPages = bookToAdd.NumberOfPages,
+            //    InStock = true
+            //};
+            var book = Mapper.Map<Book>(bookToAdd);
+            Context.Books.Add(book); // I have no Id!
+            await Context.SaveChangesAsync(); // Suddenly I have an ID! 
+
+            //var response = new GetABookResponse
+            //{
+            //    Id = book.Id,
+            //    Title = book.Title,
+            //    Author = book.Author,
+            //    Genre = book.Genre,
+            //    NumberOfPages = book.NumberOfPages
+            //};
+            var response = Mapper.Map<GetABookResponse>(book);
+            return response;
+        }
+
         public async Task<GetBooksResponse> GetAllBooksFor(string genre)
         {
             var books = Context.Books

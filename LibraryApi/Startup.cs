@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using LibraryApi.Profiles;
+using System.Text.Json.Serialization;
 
 namespace LibraryApi
 {
@@ -36,6 +37,7 @@ namespace LibraryApi
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
             services.AddTransient<ISystemTime, SystemTime>(); // create a new instance of this for each needed injection
@@ -78,7 +80,19 @@ namespace LibraryApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
 
-            }); 
+            });
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetConnectionString("Redis");
+            });
+
+            services.AddTransient<ICacheTheCatalog, CatalogService>();
+
+            //services.AddResponseCaching((options) =>
+            //{
+
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
