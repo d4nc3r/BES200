@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using LibraryApi.Profiles;
 using System.Text.Json.Serialization;
+using RabbitMqUtils;
 
 namespace LibraryApi
 {
@@ -33,6 +34,8 @@ namespace LibraryApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRabbit(Configuration);
+            services.AddScoped<ISendReservationsToTheQueue, RabbitMqReservationProcessor>();
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {

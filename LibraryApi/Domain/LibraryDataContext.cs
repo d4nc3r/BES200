@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 namespace LibraryApi.Domain
 {
@@ -27,6 +29,7 @@ namespace LibraryApi.Domain
         public int Id { get; set; }
         public string For { get; set; }
         public string Books { get; set; } // "1,3,8,16"
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ReservationStatus Status { get; set; }
         public DateTime ReservationCreated { get; set; }
     }
